@@ -21,9 +21,9 @@ SealerDirection = OutputController(pin_number=SealerDirectionPin, name="Sealer D
 
 class StepperController:
     controller = RelayController()
-    motor_enabled = False  # Track motor power state
 
     def __init__(self, pulse_pin: int, direction_pin: int, pulse_interval: float):
+        self.controller.enable_stepper()
         self.ready = FPJ_PCF.relay_ready
         self.pulse_interval = pulse_interval
 
@@ -50,9 +50,6 @@ class StepperController:
             print("StepperController not ready or pins not initialized.")
             return
 
-        if not self.motor_enabled:
-            self.enable()
-        
         self.direction_pin.turn_on() if direction else self.direction_pin.turn_off()
         print(f"Moving stepper: direction={direction}, steps={step}")
 
@@ -70,34 +67,29 @@ class StepperController:
             print("StepperController not ready or pins not initialized.")
             return
 
-        if not self.motor_enabled:
-            self.enable()
-        
         self.direction_pin.turn_on() if direction else self.direction_pin.turn_off()
         print(f"Moving stepper toward destination, direction={direction}")
 
         for current_step in range(max_step):
             if destination_func and destination_func():
+                #print(f"Destination reached at step {current_step + 1}.")
                 break
 
             self.pulse_pin.turn_off()
             sleep(self.pulse_interval)
             self.pulse_pin.turn_on()
             sleep(self.pulse_interval)
+            #print(f"Step {current_step + 1} of {max_step}")
 
         print("Stepper destination movement complete.")
 
     def enable(self) -> None:
-        if not self.motor_enabled:
-            self.controller.enable_stepper()
-            self.motor_enabled = True
-            print("Stepper motor enabled.")
+        self.controller.enable_stepper()
+        print("Stepper motor enabled.")
 
     def disable(self) -> None:
-        if self.motor_enabled:
-            self.controller.disable_stepper()
-            self.motor_enabled = False
-            print("Stepper motor disabled.")
+        self.controller.disable_stepper()
+        print("Stepper motor disabled.")
 
 
 class Steppers:
@@ -116,6 +108,7 @@ class Steppers:
 
     def lift_cover(self) -> None:
         print("Lifting cover...")
+        self.sealer.enable()
         self.sealer.move_stepper_to_destination(
             direction=True,
             max_step=1000,
@@ -124,6 +117,7 @@ class Steppers:
 
     def seal(self) -> None:
         print("Sealing...")
+        self.sealer.enable()
         self.sealer.move_stepper_to_destination(
             direction=False,
             max_step=1000,
@@ -135,19 +129,20 @@ class Steppers:
         self.slider.enable()
         self.lift_cover()
         self.slider.move_stepper_to_destination(
-            direction=True,
-            max_step=100000,  # Safety max steps to prevent endless loop
+            direction=True,  # Assuming False is the direction toward home
+            max_step=100000,   # Safety max steps to prevent endless loop
             destination_func=limit_status.is_slider_home
         )
 
     def moveSliderToMixer(self) -> None:
-        print("Moving slider to mixer...")
+        print("Moving slider to home...")
         self.slider.enable()
         self.lift_cover()
+        
         self.slider.move_stepper(False, step=21000)
 
     def moveSliderToSealer(self) -> None:
-        print("Moving slider to sealer...")
+        print("Moving slider to home...")
         self.slider.enable()
         self.lift_cover()
         self.slider.move_stepper(False, step=37000)

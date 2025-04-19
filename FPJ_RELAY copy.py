@@ -50,6 +50,8 @@ class Relay:
         print(f"{self.name} is turned OFF.")
         sleep(3)
 
+        
+
 class RelayController:
     # Relay instances for each device
     WaterPumpRelay = Relay(pin_number=6, name="Water Pump")
@@ -63,10 +65,10 @@ class RelayController:
     ServoPowerRelay = Relay(pin_number=2, name="Servo Power Supply")
     ChopperRelay = Relay(pin_number=1, name="Chopper Motor")
 
+
     def __init__(self):
         # Ensure unused relays are turned off
         Relay.turn_off_unused_relays()
-        self.IsChopperRunning: bool= False
         sleep(5)
 
     def pump_water(self, duration: float) -> None:
@@ -87,17 +89,20 @@ class RelayController:
         print("Stepper motor power supply is turned ON.")
         sleep(3)
 
+
     def disable_stepper(self) -> None:
         """Disable the stepper motor power supply."""
         self.StepperPowerRelay.turn_off()
         print("Stepper motor power supply is turned OFF.")
         sleep(3)
 
+
     def enable_servo(self) -> None:
         """Enable the servo motor power supply."""
         self.ServoPowerRelay.turn_on()
         print("Servo motor power supply is turned ON.")
         sleep(3)
+
 
     def disable_servo(self) -> None:
         """Disable the servo motor power supply."""
@@ -142,25 +147,22 @@ class RelayController:
         print("Finished dispensing molasses.")
 
     def turn_on_chopper(self) -> None:
-        """Turn on the chopper via the relay."""
-        if not self.IsChopperRunning:
-            print("Turning on the chopper...")
-            self.ChopperRelay.turn_on()
-            self.IsChopperRunning = True
-        else:
-            print("Chopper already running")
+        """
+        Turn on the chopper via the relay.
+        """
+        print("Turning on the chopper...")
+        self.ChopperRelay.turn_on()
+        print("Chopper is now ON.")
 
     def turn_off_chopper(self) -> None:
-        """Turn off the chopper via the relay."""
-        if self.IsChopperRunning:
-            print("Turning off the chopper...")
-            self.ChopperRelay.turn_off()
-            self.IsChopperRunning = False
-        else:
-            print("Chopper is not running")
+        """
+        Turn off the chopper via the relay.
+        """
+        print("Turning off the chopper...")
+        self.ChopperRelay.turn_off()
+        print("Chopper is now OFF.")
 
     def shutdown(self) -> None:
-        """Shutdown all relays."""
         self.ChopperRelay.turn_off()
         self.MixerRelay.turn_off()
         self.WaterPumpRelay.turn_off()
@@ -170,32 +172,6 @@ class RelayController:
         self.StepperPowerRelay.turn_off()
         self.MixerDownRelay.turn_off()
         self.MixerUpRelay.turn_off()
-
-class OutputController:
-    def __init__(self, pin_number: int, name: str) -> None:
-        self.name = name
-        self.available = FPJ_PCF.limit_switch_ready
-        self.pcf = FPJ_PCF.pcf_limitswitch
-
-        if self.available and self.pcf is not None:
-            try:
-                self.pin = self.pcf.get_pin(pin_number)
-                self.pin.switch_to_output(value=True)
-            except Exception as e:
-                print(f"Error setting up pin {pin_number} for {name}: {e}")
-                self.available = False
-
-    def turn_on(self) -> None:
-        """Turn on the output device."""
-        if self.available:
-            print(f"Turning ON {self.name}")
-            self.pin.value = False
-
-    def turn_off(self) -> None:
-        """Turn off the output device."""
-        if self.available:
-            print(f"Turning OFF {self.name}")
-            self.pin.value = True
 
 # Test function (not in production)
 def test_all_relays():
@@ -221,18 +197,56 @@ def test_loop() -> None:
     controller.mix(10)
     controller.mixer_up()
 
-if __name__ == "__main__":
-    try:
-        controller = RelayController()
-        controller.turn_on_chopper()
-        sleep(5)
+class OutputController:
+    def __init__(self, pin_number: int, name: str) -> None:
+        self.name = name
+        self.available = FPJ_PCF.limit_switch_ready
+        self.pcf = FPJ_PCF.pcf_limitswitch
 
+        if self.available and self.pcf is not None:
+            try:
+                self.pin = self.pcf.get_pin(pin_number)
+                self.pin.switch_to_output(value=True)
+            except Exception as e:
+                print(f"Error setting up pin {pin_number} for {name}: {e}")
+                self.available = False
+
+    def turn_on(self) -> None:
+        if self.available:
+            print(f"Turning ON {self.name}")
+            self.pin.value = False
+
+    def turn_off(self) -> None:
+        if self.available:
+            print(f"Turning OFF {self.name}")
+            self.pin.value = True
+
+
+
+controller = RelayController()
+
+
+
+
+
+
+# Main test execution
+if __name__ == "__main__":
+
+    try:
+        # Continuously get weight and tare in a loop
         while True:
+            #sleep(1)  # Wait for 1 second before getting the weight again
+            #test_output_controller()
+            controller.turn_on_chopper()
+            sleep(5)
+
             print("Loop")
-            sleep(1)  # Wait before restarting
     except KeyboardInterrupt:
-        print("\nProgram terminated by user.")
+        print("\n\n Program terminated by user.")
     finally:
-        controller.shutdown()
+        # Close the serial connection when exiting
+        controller.turn_off_chopper()
         sleep(5)
         print("\nProgram closed.")
+        
