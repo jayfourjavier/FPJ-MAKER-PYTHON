@@ -61,7 +61,7 @@ class StepperController:
             sleep(self.pulse_interval)
             self.pulse_pin.turn_on()
             sleep(self.pulse_interval)
-            print(f"Step {current_step + 1} of {step}")
+            #print(f"Step {current_step + 1} of {step}")
 
         print("Stepper movement complete.")
 

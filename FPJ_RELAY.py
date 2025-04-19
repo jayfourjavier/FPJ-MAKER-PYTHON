@@ -61,12 +61,15 @@ class RelayController:
     MixerUpRelay = Relay(pin_number=12, name="Mixer Up Relay")
     MolassesDispenser = ServoController()
     ServoPowerRelay = Relay(pin_number=2, name="Servo Power Supply")
+    SmpsRelay = Relay(pin_number=0, name="Main Power Supply")
     ChopperRelay = Relay(pin_number=1, name="Chopper Motor")
+    ChargerRelay = Relay(pin_number=11, name="Charger Relay")
 
     def __init__(self):
         # Ensure unused relays are turned off
         Relay.turn_off_unused_relays()
         self.IsChopperRunning: bool= False
+        
         sleep(5)
 
     def pump_water(self, duration: float) -> None:
@@ -159,8 +162,17 @@ class RelayController:
         else:
             print("Chopper is not running")
 
+    def power_up(self) -> None:
+        print("Power on")
+        self.SmpsRelay.turn_on()
+
+    def charge(self) -> None:
+        print("Charge")
+        self.ChargerRelay.turn_on()
+
     def shutdown(self) -> None:
         """Shutdown all relays."""
+        
         self.ChopperRelay.turn_off()
         self.MixerRelay.turn_off()
         self.WaterPumpRelay.turn_off()
@@ -170,6 +182,8 @@ class RelayController:
         self.StepperPowerRelay.turn_off()
         self.MixerDownRelay.turn_off()
         self.MixerUpRelay.turn_off()
+        self.SmpsRelay.turn_off()
+        self.ChargerRelay.turn_off()
 
 class OutputController:
     def __init__(self, pin_number: int, name: str) -> None:
@@ -194,7 +208,7 @@ class OutputController:
     def turn_off(self) -> None:
         """Turn off the output device."""
         if self.available:
-            print(f"Turning OFF {self.name}")
+            #print(f"Turning OFF {self.name}")
             self.pin.value = True
 
 # Test function (not in production)
@@ -224,11 +238,13 @@ def test_loop() -> None:
 if __name__ == "__main__":
     try:
         controller = RelayController()
-        controller.turn_on_chopper()
+        #controller.power_up()
+        #controller.charge()
+
         sleep(5)
 
         while True:
-            print("Loop")
+            #print("Loop")
             sleep(1)  # Wait before restarting
     except KeyboardInterrupt:
         print("\nProgram terminated by user.")

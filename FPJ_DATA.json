@@ -1,10 +1,10 @@
 {
     "IsAtHome": true,
     "NeemWeight": 0,
-    "KakawateWeight": 1005,
+    "KakawateWeight": 0,
     "WaterWeight": 0,
     "MolassesWeight": 0,
-    "IsFermenting": false,
+    "IsFermenting": true,
     "SliderLatestPosition": 1500,
     "MixerLatestPosition": 100,
     "IsMixingDone": true

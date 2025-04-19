@@ -214,26 +214,26 @@ class FpjStatus:
         self.fpjson = FpjJson()
 
     def is_kakawate_enough(self) -> bool:
-        weight = self.fpjson.json_helper.get("KakawateWeight", 0)
+        weight = self.fpjson.get_kakawate_weight()
         print(f"[STATUS] KakawateWeight is {weight}g")
         return weight >= 1000
 
     def is_neem_enough(self) -> bool:
-        weight = self.fpjson.json_helper.get("NeemWeight", 0)
+        weight = self.fpjson.get_neem_weight()
         print(f"[STATUS] NeemWeight is {weight}g")
         return weight >= 2000
 
     def is_molasses_enough(self) -> bool:
-        weight = self.fpjson.json_helper.get("MolassesWeight", 0)
+        weight = self.fpjson.get_molasses_weight()
         print(f"[STATUS] MolassesWeight is {weight}g")
         return weight >= 4000
 
     def is_water_enough(self) -> bool:
-        weight = self.fpjson.json_helper.get("WaterWeight", 0)
+        weight = self.fpjson.get_water_weight()
         print(f"[STATUS] WaterWeight is {weight}g")
         return weight >= 6000
 
-    def is_ingredients_complete(self) -> bool:
+    def is_ingredients_enough(self) -> bool:
         return (
             self.is_kakawate_enough()
             and self.is_neem_enough()
@@ -242,9 +242,12 @@ class FpjStatus:
         )
 
     def batch_done(self) -> bool:
-        is_done = self.fpjson.json_helper.get("IsFermenting", False)
+        is_done = self.fpjson.is_already_fermenting()
         print(f"[STATUS] BatchDone is {is_done}")
         return is_done
+    
+    def is_mixing_done(self) -> bool: 
+        return self.fpjson.get_mixing_status()
 
 
 # Main execution

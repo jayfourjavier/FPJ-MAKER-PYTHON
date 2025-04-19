@@ -2,7 +2,7 @@ from RPLCD.i2c import CharLCD
 from smbus2 import SMBus
 from time import sleep
 
-class FPJ_LCD:
+class LCD_CONTROLLER:
     def __init__(self, address, cols=20, rows=4):
         self.address = address
         self.lcd = None
@@ -39,28 +39,35 @@ class FPJ_LCD:
         for i, text in enumerate(lines):
             if text:
                 try:
+                    centered = str(text).strip().center(20)[:20]  # Center-align and trim if needed
                     self.lcd.cursor_pos = (i, 0)
-                    self.lcd.write_string(str(text).ljust(20)[:20])
+                    self.lcd.write_string(centered)
                 except Exception as e:
                     print(f"❌ Error writing to line {i+1} on LCD at 0x{self.address:02X}: {e}")
 
+                
+class FPJ_LCD:
+    def __init__(self):
+        self.lcd1 = LCD_CONTROLLER(0x25)
+        self.lcd2 = LCD_CONTROLLER(0x24)
+
+    def welcome(self) -> None:
+        self.lcd1.display(overwrite=True, 
+                          line1="WELCOME TO FPJ MAKER",
+                          line2="FABRICATED BY:",
+                          line3="JAY FOUR JAVIER",
+                          line4="JODIE JAVIER")
+        self.lcd2.display(overwrite=True, 
+                          line1="FABRICATED FOR:",
+                          line2="JONASH MALLARI",
+                          line3="JAYBERT MAGNAYE",
+                          line4="ARVIE MANDAP")
+
+
 # Example usage
 if __name__ == '__main__':
-    lcd1 = FPJ_LCD(0x25)
-    lcd2 = FPJ_LCD(0x24)
+    print("FPJ_LCD.py TEST")
+    lcd = FPJ_LCD()
+    lcd.welcome()
 
-    lcd1.display(
-        overwrite=True,
-        line1="LCD 1 LINE 1",
-        line2="LCD 1 LINE 2",
-        line3="LCD 1 LINE 3",
-        line4="LCD 1 LINE 4"
-    )
 
-    lcd2.display(
-        overwrite=True,
-        line1="LCD 2 LINE 1",
-        line2="LCD 2 LINE 2",
-        line3="LCD 2 LINE 3",
-        line4="LCD 2 LINE 4"
-    )

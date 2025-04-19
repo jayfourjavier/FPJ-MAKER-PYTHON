@@ -41,6 +41,10 @@ CoverUpperLimitSwitchPin = 5
 MixerUpperLimitSwitchPin = 6
 MixerLowerLimitSwitchPin = 7
 SliderHomeLimitSwitchPin = 11
+ResetPin: int = 9
+StartPin: int = 10
+LedPin: int = 8
+
 
 # === Instantiate limit switches ===
 MixerUp = LimitSwitch(MixerUpperLimitSwitchPin, "Mixer Up")
@@ -48,6 +52,8 @@ MixerDown = LimitSwitch(MixerLowerLimitSwitchPin, "Mixer Down")
 CoverUp = LimitSwitch(CoverUpperLimitSwitchPin, "Cover Up")
 CoverDown = LimitSwitch(CoverLowerLimitSwitchPin, "Cover Down")
 Slider = LimitSwitch(SliderHomeLimitSwitchPin, "Slider")
+Reset = LimitSwitch(ResetPin, "Reset")
+Start = LimitSwitch(StartPin, "Start")
 
 
 # === Limit Status Class ===
@@ -69,6 +75,12 @@ class LimitStatus:
 
     def is_cover_down(self) -> bool:
         return CoverDown.is_triggered()
+    
+    def is_reset_btn_pressed(self) -> bool:
+        return Reset.is_triggered()
+    
+    def is_start_btn_pressed(self) -> bool:
+        return Start.is_triggered()
 
 if __name__ == "__main__":
     limit_status = LimitStatus()
@@ -76,9 +88,13 @@ if __name__ == "__main__":
     try:
         print("Starting Limit Switch Test (Ctrl+C to stop)...")
         while True:
-            print(f"Mixer Up: {limit_status.is_mixer_up()} | Mixer Down: {limit_status.is_mixer_down()} | Cover Up: {limit_status.is_cover_up()} | Cover Down: {limit_status.is_cover_down()} | Slider Home: {limit_status.is_slider_home()}")
-            time.sleep(0.5)
-    
+            if limit_status.is_reset_btn_pressed():
+                print("limit_status.is_reset_btn_pressed()")
+
+            if limit_status.is_loaded_btn_pressed():
+                print("limit_status.is_loaded_btn_pressed()")
+
+
     except KeyboardInterrupt:
         print("\n\nTest stopped by user.")
 
