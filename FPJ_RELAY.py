@@ -202,7 +202,7 @@ class OutputController:
     def turn_on(self) -> None:
         """Turn on the output device."""
         if self.available:
-            print(f"Turning ON {self.name}")
+            #print(f"Turning ON {self.name}")
             self.pin.value = False
 
     def turn_off(self) -> None:
