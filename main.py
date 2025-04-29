@@ -229,6 +229,11 @@ def add_ingredients():
         lcd.display_water_weight(json.get_water_weight())
 
 def reset_flags():
+    global ReadyForHarvestDisplayed
+    global WaitingToFermentDisplayed
+    global MachineResetDone
+    global LoadAndPressStartDisplayed
+
     stepper.lift_cover()
     sleep(10)
     json.set_fermenting(False)
@@ -241,8 +246,12 @@ def reset_flags():
     MachineResetDone = False
     LoadAndPressStartDisplayed = False
 
-if __name__ == "__main__":
-    
+def main () -> None:
+    global MachineResetDone
+    global WaitingToFermentDisplayed
+    global ReadyForHarvestDisplayed
+    global LoadAndPressStartDisplayed
+
     try:
         lcd.welcome()
         controller.power_up()
@@ -296,3 +305,8 @@ if __name__ == "__main__":
     finally:
         controller.shutdown()
         print("[SYSTEM] System safely shut down.")
+
+
+
+if __name__ == "__main__":
+    main()
