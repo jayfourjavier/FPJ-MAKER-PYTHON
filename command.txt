@@ -1,0 +1,7 @@
+Stop service	            sudo systemctl stop fpjmaker.service
+Start service	            sudo systemctl start fpjmaker.service
+Restart service	            sudo systemctl restart fpjmaker.service
+Check status	            sudo systemctl status fpjmaker.service
+Disable autorun on boot	    sudo systemctl disable fpjmaker.service
+View logs	                journalctl -u fpjmaker.service -e
+

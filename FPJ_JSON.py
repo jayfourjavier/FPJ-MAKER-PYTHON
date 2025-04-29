@@ -242,17 +242,17 @@ class FpjStatus:
     def is_neem_enough(self) -> bool:
         weight = self.fpjson.get_neem_weight()
         print(f"[STATUS] NeemWeight is {weight}g")
-        return weight >= 2000
+        return weight >= 1000
 
     def is_molasses_enough(self) -> bool:
         weight = self.fpjson.get_molasses_weight()
         print(f"[STATUS] MolassesWeight is {weight}g")
-        return weight >= 4000
+        return weight >= 2000
 
     def is_water_enough(self) -> bool:
         weight = self.fpjson.get_water_weight()
         print(f"[STATUS] WaterWeight is {weight}g")
-        return weight >= 6000
+        return weight >= 2000
 
     def is_ingredients_enough(self) -> bool:
         return (

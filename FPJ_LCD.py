@@ -187,7 +187,7 @@ class FPJ_LCD:
             11: "Sealing",
             12: "Waiting to Ferment",
             13: "Ready for Harvest",
-            14: "Load Ing and Press Start"
+            14: "Load and Press Start"
         }
 
         message = activity_map.get(activity, "Unknown Activity").upper()

@@ -51,19 +51,20 @@ class Relay:
         sleep(3)
 
 class RelayController:
-    # Relay instances for each device
+    # RelayMODULE 1
     WaterPumpRelay = Relay(pin_number=6, name="Water Pump")
     KakawateRelay = Relay(pin_number=7, name="Kakawate Dispenser")
     NeemRelay = Relay(pin_number=9, name="Neem Dispenser")
     MixerRelay = Relay(pin_number=10, name="Mixer Motor")
     StepperPowerRelay = Relay(pin_number=5, name="Stepper Motor Power Supply")
-    MixerDownRelay = Relay(pin_number=3, name="Mixer Down Relay")
-    MixerUpRelay = Relay(pin_number=12, name="Mixer Up Relay")
     MolassesDispenser = ServoController()
     ServoPowerRelay = Relay(pin_number=2, name="Servo Power Supply")
     SmpsRelay = Relay(pin_number=0, name="Main Power Supply")
     ChopperRelay = Relay(pin_number=1, name="Chopper Motor")
     ChargerRelay = Relay(pin_number=11, name="Charger Relay")
+    #RELAY MODULE 2
+    MixerDownRelay = Relay(pin_number=3, name="Mixer Down Relay")
+    MixerUpRelay = Relay(pin_number=12, name="Mixer Up Relay")
 
     def __init__(self):
         # Ensure unused relays are turned off
@@ -240,6 +241,8 @@ if __name__ == "__main__":
         controller = RelayController()
         #controller.power_up()
         #controller.charge()
+        controller.mixer_down()
+
 
         sleep(5)
 
@@ -247,7 +250,8 @@ if __name__ == "__main__":
             #print("Loop")
             sleep(5)  # Wait before restarting
             #controller.add_molasses(10)
-            controller.pump_water(10)
+            #controller.pump_water(10)
+            controller.mixer_down()
 
     except KeyboardInterrupt:
         print("\nProgram terminated by user.")
