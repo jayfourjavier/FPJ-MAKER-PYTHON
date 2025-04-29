@@ -239,9 +239,9 @@ def test_loop() -> None:
 if __name__ == "__main__":
     try:
         controller = RelayController()
-        #controller.power_up()
+        controller.power_up()
         #controller.charge()
-        controller.mixer_down()
+        #controller.mixer_down()
 
 
         sleep(5)
@@ -251,7 +251,7 @@ if __name__ == "__main__":
             sleep(5)  # Wait before restarting
             #controller.add_molasses(10)
             #controller.pump_water(10)
-            controller.mixer_down()
+            #controller.mix(10)
 
     except KeyboardInterrupt:
         print("\nProgram terminated by user.")

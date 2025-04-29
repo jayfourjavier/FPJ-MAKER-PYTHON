@@ -36,6 +36,7 @@ TARGET_WEIGHTS = {
 
 def reset_slider() -> None:
     """Resets the mixer to its home position and tares the scale."""
+    global MachineResetDone
     print("[SYSTEM] Resetting slider and taring scale...")
     lcd.display_activity(1)
     controller.mixer_up()
