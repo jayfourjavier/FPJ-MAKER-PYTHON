@@ -1,0 +1,14 @@
+{
+    "IsAtHome": false,
+    "NeemWeight": 0,
+    "KakawateWeight": 0,
+    "MolassesWeight": 0,
+    "WaterWeight": 0,
+    "SliderLatestPosition": 1500,
+    "MixerLatestPosition": 100,
+    "FermentationDate": "2025-04-17 22:54:55",
+    "IsLoaded": false,
+    "IsMixingDone": false,
+    "isSealed": false,
+    "IsFermenting": false
+}
