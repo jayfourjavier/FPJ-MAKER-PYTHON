@@ -3,14 +3,13 @@ import os
 from datetime import datetime
 from typing import Any
 
-
 class JsonHelper:
-    def __init__(self, filename: str = "data.json") -> None:
+    def __init__(self, filename: str = "FPJ_DATA.json") -> None:
         """
         Initializes the JsonHelper with a specified file.
 
         Args:
-            filename (str): The name of the JSON file to read/write. Defaults to "data.json".
+            filename (str): The name of the JSON file to read/write. Defaults to "FPJ_DATA.json".
         """
         self.filename: str = filename
         self._ensure_file()
@@ -19,10 +18,12 @@ class JsonHelper:
         """
         Ensures that the JSON file exists. If the file does not exist, it creates an empty file.
         """
-        if not os.path.isfile(self.filename):
+        # Absolute path to the file
+        abs_path = os.path.abspath(self.filename)
+        if not os.path.isfile(abs_path):
             try:
-                print(f"[INFO] Creating new data file: {self.filename}")
-                with open(self.filename, "w") as f:
+                print(f"[INFO] Creating new data file at: {abs_path}")
+                with open(abs_path, "w") as f:
                     json.dump({}, f, indent=4)
             except Exception as e:
                 print(f"[ERROR] Failed to create data file: {e}")
@@ -35,11 +36,12 @@ class JsonHelper:
             dict: The loaded JSON data.
         """
         try:
-            with open(self.filename, "r") as f:
+            abs_path = os.path.abspath(self.filename)
+            with open(abs_path, "r") as f:
                 data: dict = json.load(f)
                 return data
         except Exception as e:
-            print(f"[ERROR] Failed to read data: {e}")
+            print(f"[ERROR] Failed to read data from {abs_path}: {e}")
             return {}
 
     def get(self, key: str, default: Any = None) -> Any:
@@ -69,11 +71,12 @@ class JsonHelper:
         try:
             data: dict = self.get_all()
             data[key] = value
-            with open(self.filename, "w") as f:
+            abs_path = os.path.abspath(self.filename)
+            with open(abs_path, "w") as f:
                 json.dump(data, f, indent=4)
             print(f"[WRITE] {key} set to {value}")
         except Exception as e:
-            print(f"[ERROR] Failed to write data: {e}")
+            print(f"[ERROR] Failed to write data to {abs_path}: {e}")
 
     def modify(self, key: str, value: Any) -> None:
         """
@@ -90,11 +93,12 @@ class JsonHelper:
             else:
                 print(f"[ADD] {key} does not exist, adding new entry.")
             data[key] = value
-            with open(self.filename, "w") as f:
+            abs_path = os.path.abspath(self.filename)
+            with open(abs_path, "w") as f:
                 json.dump(data, f, indent=4)
             print(f"[WRITE] {key} set to {value}")
         except Exception as e:
-            print(f"[ERROR] Failed to modify data: {e}")
+            print(f"[ERROR] Failed to modify data in {abs_path}: {e}")
 
 
 class FpjJson:
@@ -247,71 +251,15 @@ class FpjStatus:
     def is_molasses_enough(self) -> bool:
         weight = self.fpjson.get_molasses_weight()
         print(f"[STATUS] MolassesWeight is {weight}g")
-        return weight >= 2000
+        return weight >= 500
 
     def is_water_enough(self) -> bool:
         weight = self.fpjson.get_water_weight()
         print(f"[STATUS] WaterWeight is {weight}g")
-        return weight >= 2000
+        return weight >= 500
 
-    def is_ingredients_enough(self) -> bool:
-        return (
-            self.is_kakawate_enough()
-            and self.is_neem_enough()
-            and self.is_molasses_enough()
-            and self.is_water_enough()
-        )
-
-    def is_batch_done(self) -> bool:
-        is_done = self.fpjson.is_already_fermenting()
-        print(f"[STATUS] BatchDone is {is_done}")
-        return is_done
-    
-    def is_mixing_done(self) -> bool: 
-        return self.fpjson.get_mixing_status()
-
-    def is_ready_for_harvest(self, duration_in_days: int) -> bool:
-        """Checks if the fermentation duration has exceeded the given days."""
-        fermentation_date_str = self.fpjson.get_fermentation_start_date()
-        if not fermentation_date_str:
-            print("[ERROR] Fermentation date is not set.")
-            return False
-
-        fermentation_date = datetime.strptime(fermentation_date_str, '%Y-%m-%d %H:%M:%S')
-        current_date = datetime.now()
-        duration = (current_date - fermentation_date).days
-
-        print(f"[STATUS] Fermentation started on {fermentation_date_str}, current date is {current_date.strftime('%Y-%m-%d %H:%M:%S')}. Duration: {duration} days")
-
-        if duration >= duration_in_days:
-            print(f"[INFO] Ready for harvest!")
-            return True
-        else:
-            print(f"[INFO] Not yet ready for harvest. {duration_in_days - duration} days to go.")
-            return False
+    def reset(self) -> None:
+        """Resets all weights."""
+        self.fpjson.reset_weights()
 
 
-# Main execution
-if __name__ == "__main__":
-    try:
-        fpj_json = FpjStatus()
-
-        # Example of setting and getting slider position
-        fpj_json.set_slider_position(1500)
-        latest_position = fpj_json.get_slider_position()
-        print(f"Latest position: {latest_position}")
-
-        # Reset weights
-        #fpj_json.reset_weights()
-
-        # Example of setting mixer position and checking mixing status
-        fpj_json.set_mixer_position(100)
-        fpj_json.set_mixing_status(True)
-
-        # Check and display status
-        fpj_status = FpjStatus()
-        fpj_status.check_status(fpj_json)
-        fpj_status.display_status()
-
-    except KeyboardInterrupt:
-        print("\n[EXIT] Program interrupted by user.")

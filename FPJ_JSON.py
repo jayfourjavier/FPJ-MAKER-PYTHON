@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 from typing import Any
 
+
 class JsonHelper:
     def __init__(self, filename: str = "FPJ_DATA.json") -> None:
         """
@@ -251,18 +252,51 @@ class FpjStatus:
     def is_molasses_enough(self) -> bool:
         weight = self.fpjson.get_molasses_weight()
         print(f"[STATUS] MolassesWeight is {weight}g")
-        return weight >= 500
+        return weight >= 2000
 
     def is_water_enough(self) -> bool:
         weight = self.fpjson.get_water_weight()
         print(f"[STATUS] WaterWeight is {weight}g")
-        return weight >= 500
+        return weight >= 2000
 
-    def reset(self) -> None:
-        """Resets all weights."""
-        self.fpjson.reset_weights()
+    def is_ingredients_enough(self) -> bool:
+        return (
+            self.is_kakawate_enough()
+            and self.is_neem_enough()
+            and self.is_molasses_enough()
+            and self.is_water_enough()
+        )
+
+    def is_batch_done(self) -> bool:
+        is_done = self.fpjson.is_already_fermenting()
+        print(f"[STATUS] BatchDone is {is_done}")
+        return is_done
+    
+    def is_mixing_done(self) -> bool: 
+        return self.fpjson.get_mixing_status()
+
+    def is_ready_for_harvest(self, duration_in_days: int) -> bool:
+        """Checks if the fermentation duration has exceeded the given days."""
+        fermentation_date_str = self.fpjson.get_fermentation_start_date()
+        if not fermentation_date_str:
+            print("[ERROR] Fermentation date is not set.")
+            return False
+
+        fermentation_date = datetime.strptime(fermentation_date_str, '%Y-%m-%d %H:%M:%S')
+        current_date = datetime.now()
+        duration = (current_date - fermentation_date).days
+
+        print(f"[STATUS] Fermentation started on {fermentation_date_str}, current date is {current_date.strftime('%Y-%m-%d %H:%M:%S')}. Duration: {duration} days")
+
+        if duration >= duration_in_days:
+            print(f"[INFO] Ready for harvest!")
+            return True
+        else:
+            print(f"[INFO] Not yet ready for harvest. {duration_in_days - duration} days to go.")
+            return False
 
 
+# Main execution
 if __name__ == "__main__":
     # Initialize the FPJ JSON and status helper objects
     fpj_json = FpjJson()
