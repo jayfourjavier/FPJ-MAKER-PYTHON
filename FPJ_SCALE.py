@@ -45,7 +45,8 @@ class Scale:
                         
                         # Round to the nearest 10 and return as an integer
                         rounded_weight = math.ceil(weight / 10.0) * 10
-                        return int(rounded_weight)
+                        corrected_weight = rounded_weight / 2
+                        return int(corrected_weight)
                     except ValueError:
                         print("Error: Invalid weight value received.")
                         return 0  # Return 0 if the weight value is invalid

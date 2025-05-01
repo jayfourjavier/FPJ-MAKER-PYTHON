@@ -109,8 +109,9 @@ class RelayController:
         print("Servo motor power supply is turned OFF.")
         sleep(3)
 
-    def mix(self, duration: float) -> None:
+    def mix(self, duration: int) -> None:
         """Activate the mixer motor for a specific duration."""
+        print("Mixer called")
         self.MixerRelay.run(duration)
     
     def mixer_down(self) -> None:
@@ -252,6 +253,10 @@ if __name__ == "__main__":
             #controller.add_molasses(10)
             #controller.pump_water(10)
             #controller.mix(10)
+
+            #controller.dispense_kakawate(3)
+            #controller.dispense_neem(3)
+
 
     except KeyboardInterrupt:
         print("\nProgram terminated by user.")

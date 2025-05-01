@@ -3,5 +3,88 @@ Start service	            sudo systemctl start fpjmaker.service
 Restart service	            sudo systemctl restart fpjmaker.service
 Check status	            sudo systemctl status fpjmaker.service
 Disable autorun on boot	    sudo systemctl disable fpjmaker.service
+Enable autorun on boot	    sudo systemctl enable fpjmaker.service
+info                        cat /etc/systemd/system/fpjmaker.service
+live                        journalctl -fu fpjmaker.service
+
 View logs	                journalctl -u fpjmaker.service -e
+Check i2C                   i2cdetect -y 1
+
+TEST FROM SCRATCH
+{
+    "NeemWeight": 0,
+    "KakawateWeight": 0,
+    "MolassesWeight": 0,
+    "WaterWeight": 0,
+    "FermentationDate": "2025-04-24 22:07:21",
+    "IsLoaded": false,
+    "IsMixingDone": false,
+    "IsFermenting": false
+}
+TEST KAKAWATE DISPENSING
+{
+    "NeemWeight": 0,
+    "KakawateWeight": 0,
+    "MolassesWeight": 0,
+    "WaterWeight": 0,
+    "FermentationDate": "2025-04-24 22:07:21",
+    "IsLoaded": true,
+    "IsMixingDone": false,
+    "IsFermenting": false
+}
+TEST NEEM DISPENSING
+{
+    "NeemWeight": 0,
+    "KakawateWeight": 1000,
+    "MolassesWeight": 0,
+    "WaterWeight": 0,
+    "FermentationDate": "2025-04-24 22:07:21",
+    "IsLoaded": true,
+    "IsMixingDone": false,
+    "IsFermenting": false
+}
+TEST MOLASSESS DISPENSING
+{
+    "NeemWeight": 1000,
+    "KakawateWeight": 1000,
+    "MolassesWeight": 0,
+    "WaterWeight": 0,
+    "FermentationDate": "2025-04-24 22:07:21",
+    "IsLoaded": true,
+    "IsMixingDone": false,
+    "IsFermenting": false
+}
+TEST WATER DISPENSING
+{
+    "NeemWeight": 1000,
+    "KakawateWeight": 1000,
+    "MolassesWeight": 2000,
+    "WaterWeight": 0,
+    "FermentationDate": "2025-04-24 22:07:21",
+    "IsLoaded": true,
+    "IsMixingDone": false,
+    "IsFermenting": false
+}
+TEST MIXING DISPENSING
+{
+    "NeemWeight": 1000,
+    "KakawateWeight": 1000,
+    "MolassesWeight": 2000,
+    "WaterWeight": 2000,
+    "FermentationDate": "2025-04-24 22:07:21",
+    "IsLoaded": true,
+    "IsMixingDone": false,
+    "IsFermenting": false
+}
+TEST RESET DISPENSING
+{
+    "NeemWeight": 1000,
+    "KakawateWeight": 1000,
+    "MolassesWeight": 2000,
+    "WaterWeight": 2000,
+    "FermentationDate": "2025-04-24 22:07:21", #MOVE DATE BACKWARD
+    "IsLoaded": true,
+    "IsMixingDone": true,
+    "IsFermenting": true
+}
 

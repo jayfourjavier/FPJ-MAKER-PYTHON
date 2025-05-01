@@ -99,7 +99,7 @@ def dispense_ingredient(
             break
 
         dispense_func(step)
-        sleep(0.3)
+        sleep(3)
 
 
 
@@ -240,6 +240,7 @@ def reset_flags():
     json.reset_weights()
     json.set_mixing_status(False)
     json.set_loaded(False)
+    lcd.lcd2.clear()
     print("RESET")
     ReadyForHarvestDisplayed = False
     WaitingToFermentDisplayed = False
@@ -247,6 +248,7 @@ def reset_flags():
     LoadAndPressStartDisplayed = False
 
 def main () -> None:
+    ProdMode = True
     global MachineResetDone
     global WaitingToFermentDisplayed
     global ReadyForHarvestDisplayed
@@ -256,8 +258,11 @@ def main () -> None:
         lcd.welcome()
         controller.power_up()
         lcd.lcd2.clear()
+        #controller.mix(20)
+        #mix()
 
-        while True:
+
+        while ProdMode:
             if button.is_reset_btn_pressed():
                 reset_flags()
                 if not MachineResetDone:
