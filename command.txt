@@ -6,6 +6,8 @@ Disable autorun on boot	    sudo systemctl disable fpjmaker.service
 Enable autorun on boot	    sudo systemctl enable fpjmaker.service
 info                        cat /etc/systemd/system/fpjmaker.service
 live                        journalctl -fu fpjmaker.service
+reboot                      sudo  reboot
+shutdown                    sudo  shutdown -h now
 
 View logs	                journalctl -u fpjmaker.service -e
 Check i2C                   i2cdetect -y 1
