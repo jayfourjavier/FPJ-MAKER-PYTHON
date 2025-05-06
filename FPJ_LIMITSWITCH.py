@@ -83,19 +83,32 @@ class LimitStatus:
         return Start.is_triggered()
 
 if __name__ == "__main__":
+    import time
+
     limit_status = LimitStatus()
-    
+
     try:
         print("Starting Limit Switch Test (Ctrl+C to stop)...")
         while True:
+            if limit_status.is_mixer_up():
+                print("Mixer Up Triggered")
+            if limit_status.is_mixer_down():
+                print("Mixer Down Triggered")
+            if limit_status.is_slider_home():
+                print("Slider Home Triggered")
+            if limit_status.is_cover_up():
+                print("Cover Up Triggered")
+            if limit_status.is_cover_down():
+                print("Cover Down Triggered")
             if limit_status.is_reset_btn_pressed():
-                print("limit_status.is_reset_btn_pressed()")
-
+                print("Reset Button Pressed")
+            if limit_status.is_start_btn_pressed():
+                print("Start Button Pressed")
             if limit_status.is_loaded_btn_pressed():
-                print("limit_status.is_loaded_btn_pressed()")
+                print("Loaded Button Pressed")
 
+            time.sleep(0.1)  # Add delay to prevent excessive CPU usage
 
     except KeyboardInterrupt:
         print("\n\nTest stopped by user.")
-
     
