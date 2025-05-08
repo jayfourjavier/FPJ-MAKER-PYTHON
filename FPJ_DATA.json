@@ -1,10 +1,10 @@
 {
-    "NeemWeight": 0,
-    "KakawateWeight": 0,
-    "MolassesWeight": 0,
+    "NeemWeight": 1000,
+    "KakawateWeight": 1000,
+    "MolassesWeight": 10,
     "WaterWeight": 0,
-    "FermentationDate": "2025-04-24 23:41:13",
-    "IsLoaded": false,
+    "FermentationDate": "2025-04-08 22:07:48",
+    "IsLoaded": true,
     "IsMixingDone": false,
     "IsFermenting": false
 }

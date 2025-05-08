@@ -20,9 +20,24 @@ class ServoController:
     def open(self):
         """Open by moving to 0 degrees"""
         print("Opening...")
-        self.move_to(0)
+        sleep(1)
+        self.move_to(90)
 
     def close(self):
-        """Close by moving to -90 degrees"""
+        """Close by moving to -45 degrees"""
         print("Closing...")
-        self.move_to(-90)
+        sleep(1)
+        self.move_to(0)
+
+if __name__ == "__main__":
+    servo = ServoController()
+
+    try:
+        while True:
+            servo.open()
+            sleep(1)
+            servo.close()
+            sleep(1)
+    except KeyboardInterrupt:
+        print("Stopped by user.")
+        

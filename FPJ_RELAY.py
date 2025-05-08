@@ -187,6 +187,8 @@ class RelayController:
         self.SmpsRelay.turn_off()
         self.ChargerRelay.turn_off()
 
+
+
 class OutputController:
     def __init__(self, pin_number: int, name: str) -> None:
         self.name = name
@@ -241,18 +243,28 @@ if __name__ == "__main__":
     try:
         controller = RelayController()
         controller.power_up()
+        controller.ServoPowerRelay.turn_on()
         #controller.charge()
-        #controller.mixer_down()
 
 
-        sleep(5)
+        #sleep(5)
 
         while True:
             #print("Loop")
+            #controller.mixer_down()
+            #sleep(5)  # Wait before restarting
+            #controller.mixer_up()
+        
+            #controller.testServo()
+
+            #controller.add_molasses(1)
+            controller.MolassesDispenser.close()
             sleep(5)  # Wait before restarting
-            #controller.add_molasses(10)
+            controller.MolassesDispenser.open()
+            sleep(5)  # Wait before restarting
+
             #controller.pump_water(10)
-            #controller.mix(10)
+            #controller.mix(20)
 
             #controller.dispense_kakawate(3)
             #controller.dispense_neem(3)

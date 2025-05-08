@@ -312,6 +312,5 @@ def main () -> None:
         print("[SYSTEM] System safely shut down.")
 
 
-
 if __name__ == "__main__":
     main()

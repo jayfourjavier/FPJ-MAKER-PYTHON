@@ -89,11 +89,12 @@ if __name__ == "__main__":
         print("Starting Limit Switch Test (Ctrl+C to stop)...")
         while True:
             if limit_status.is_reset_btn_pressed():
-                print("limit_status.is_reset_btn_pressed()")
+                print("RESET button pressed")
 
-            if limit_status.is_loaded_btn_pressed():
-                print("limit_status.is_loaded_btn_pressed()")
+            if limit_status.is_start_btn_pressed():
+                print("START button pressed")
 
+            time.sleep(.1)
 
     except KeyboardInterrupt:
         print("\n\nTest stopped by user.")
