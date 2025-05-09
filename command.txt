@@ -1,11 +1,28 @@
-Stop service	            sudo systemctl stop fpjmaker.service
-Start service	            sudo systemctl start fpjmaker.service
-Restart service	            sudo systemctl restart fpjmaker.service
-Check status	            sudo systemctl status fpjmaker.service
-Disable autorun on boot	    sudo systemctl disable fpjmaker.service
-Enable autorun on boot	    sudo systemctl enable fpjmaker.service
-info                        cat /etc/systemd/system/fpjmaker.service
-live                        journalctl -fu fpjmaker.service
+# Stop service
+sudo systemctl stop finalfpj.service
+
+# Start service
+sudo systemctl start finalfpj.service
+
+# Restart service
+sudo systemctl restart finalfpj.service
+
+# Check status
+sudo systemctl status finalfpj.service
+
+# Disable autorun on boot
+sudo systemctl disable finalfpj.service
+
+# Enable autorun on boot
+sudo systemctl enable finalfpj.service
+
+# Info about the service
+cat /etc/systemd/system/finalfpj.service
+
+# Live logs for the service
+journalctl -fu finalfpj.service
+
+
 reboot                      sudo  reboot
 shutdown                    sudo  shutdown -h now
 

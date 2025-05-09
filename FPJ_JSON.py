@@ -12,19 +12,19 @@ class JsonHelper:
         Args:
             filename (str): The name of the JSON file to read/write. Defaults to "FPJ_DATA.json".
         """
-        self.filename: str = filename
+        # Use the absolute path to the script's directory for the JSON file
+        script_dir = os.path.dirname(os.path.abspath(__file__))  # Get the directory where the script is located
+        self.filename = os.path.join(script_dir, filename)  # Combine directory path with the filename
         self._ensure_file()
 
     def _ensure_file(self) -> None:
         """
         Ensures that the JSON file exists. If the file does not exist, it creates an empty file.
         """
-        # Absolute path to the file
-        abs_path = os.path.abspath(self.filename)
-        if not os.path.isfile(abs_path):
+        if not os.path.isfile(self.filename):
             try:
-                print(f"[INFO] Creating new data file at: {abs_path}")
-                with open(abs_path, "w") as f:
+                print(f"[INFO] Creating new data file at: {self.filename}")
+                with open(self.filename, "w") as f:
                     json.dump({}, f, indent=4)
             except Exception as e:
                 print(f"[ERROR] Failed to create data file: {e}")
@@ -37,12 +37,11 @@ class JsonHelper:
             dict: The loaded JSON data.
         """
         try:
-            abs_path = os.path.abspath(self.filename)
-            with open(abs_path, "r") as f:
+            with open(self.filename, "r") as f:
                 data: dict = json.load(f)
                 return data
         except Exception as e:
-            print(f"[ERROR] Failed to read data from {abs_path}: {e}")
+            print(f"[ERROR] Failed to read data from {self.filename}: {e}")
             return {}
 
     def get(self, key: str, default: Any = None) -> Any:
@@ -72,12 +71,11 @@ class JsonHelper:
         try:
             data: dict = self.get_all()
             data[key] = value
-            abs_path = os.path.abspath(self.filename)
-            with open(abs_path, "w") as f:
+            with open(self.filename, "w") as f:
                 json.dump(data, f, indent=4)
             print(f"[WRITE] {key} set to {value}")
         except Exception as e:
-            print(f"[ERROR] Failed to write data to {abs_path}: {e}")
+            print(f"[ERROR] Failed to write data to {self.filename}: {e}")
 
     def modify(self, key: str, value: Any) -> None:
         """
@@ -94,12 +92,11 @@ class JsonHelper:
             else:
                 print(f"[ADD] {key} does not exist, adding new entry.")
             data[key] = value
-            abs_path = os.path.abspath(self.filename)
-            with open(abs_path, "w") as f:
+            with open(self.filename, "w") as f:
                 json.dump(data, f, indent=4)
             print(f"[WRITE] {key} set to {value}")
         except Exception as e:
-            print(f"[ERROR] Failed to modify data in {abs_path}: {e}")
+            print(f"[ERROR] Failed to modify data in {self.filename}: {e}")
 
 
 class FpjJson:
