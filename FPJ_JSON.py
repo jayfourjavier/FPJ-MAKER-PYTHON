@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 from typing import Any
-
+from FPJ_CONSTANTS import TARGET_WEIGHTS
 
 class JsonHelper:
     def __init__(self, filename: str = "FPJ_DATA.json") -> None:
@@ -242,22 +242,22 @@ class FpjStatus:
     def is_kakawate_enough(self) -> bool:
         weight = self.fpjson.get_kakawate_weight()
         print(f"[STATUS] KakawateWeight is {weight}g")
-        return weight >= 1000
+        return weight >= TARGET_WEIGHTS["KAKAWATE"]
 
     def is_neem_enough(self) -> bool:
         weight = self.fpjson.get_neem_weight()
         print(f"[STATUS] NeemWeight is {weight}g")
-        return weight >= 1000
+        return weight >= TARGET_WEIGHTS["NEEM"]
 
     def is_molasses_enough(self) -> bool:
         weight = self.fpjson.get_molasses_weight()
         print(f"[STATUS] MolassesWeight is {weight}g")
-        return weight >= 2000
+        return weight >= TARGET_WEIGHTS["MOLASSES"]
 
     def is_water_enough(self) -> bool:
         weight = self.fpjson.get_water_weight()
         print(f"[STATUS] WaterWeight is {weight}g")
-        return weight >= 2000
+        return weight >= TARGET_WEIGHTS["WATER"]
 
     def is_ingredients_enough(self) -> bool:
         return (

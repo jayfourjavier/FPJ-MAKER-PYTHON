@@ -23,33 +23,33 @@ class Scale:
                 if response == "TARED":
                     return True
         return False  # If the "TARED" response is never received, return False
-
+    
     def get_weight(self) -> int:
         """
-        Sends 'WEIGHT' to the ESP32 and waits for the weight value (format: 'WT,value').
-        Returns the rounded weight value (rounded to nearest 10) as an integer.
+        Clears serial buffer, then reads 5 weight values from the ESP32 (format: 'WT,value'),
+        prints each, averages them, and returns as int.
         """
-        self.serial_connection.write(b"WEIGHT\n")
-        print("Sent WEIGHT command to ESP32.")
-        
-        # Wait for the weight response (e.g., "WT, value")
-        while True:
+        self.serial_connection.reset_input_buffer()  # 🔄 Clear any old data in the buffer
+        weights = []
+        print("Collecting 5 weight readings...")
+
+        while len(weights) < 5:
             if self.serial_connection.in_waiting > 0:
-                response = self.serial_connection.readline().decode('utf-8').strip()
-                
-                if response.startswith("WT,"):
-                    # Extract the weight value from the response
-                    weight_value = response.split(",")[1]
+                line = self.serial_connection.readline().decode('utf-8').strip()
+                if line.startswith("WT,"):
                     try:
-                        weight = float(weight_value)
-                        
-                        # Round to the nearest 10 and return as an integer
-                        rounded_weight = math.ceil(weight / 10.0) * 10
-                        corrected_weight = rounded_weight / 2
-                        return int(corrected_weight)
+                        value = float(line.split(",")[1])
+                        weights.append(value)
+                        print(f"Reading {len(weights)}: {value:.2f}g")
                     except ValueError:
-                        print("Error: Invalid weight value received.")
-                        return 0  # Return 0 if the weight value is invalid
+                        print("Skipped invalid reading:", line)
+
+        avg_weight = sum(weights) / len(weights)
+        print(f"Averaged: {avg_weight:.2f}g")
+
+        return int(avg_weight)
+
+
 
     def close(self) -> None:
         """Close the serial connection."""

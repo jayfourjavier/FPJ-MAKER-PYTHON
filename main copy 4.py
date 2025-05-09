@@ -5,7 +5,6 @@ from FPJ_RELAY import RelayController, OutputController
 from FPJ_LIMITSWITCH import LimitStatus
 from FPJ_JSON import FpjJson, FpjStatus
 from FPJ_LCD import FPJ_LCD
-from FPJ_CONSTANTS import TARGET_WEIGHTS
 
 # python3 main.py
 
@@ -27,7 +26,12 @@ LoadAndPressStartDisplayed: bool = False
 LedIndicator = OutputController(pin_number=8, name="Ready for harvest")
 LedIndicator.turn_off()
 
-
+TARGET_WEIGHTS = {
+    'KAKAWATE': 1000,
+    'NEEM': 1000,
+    'MOLASSES': 2000,
+    'WATER': 2000
+}
 
 
 def reset_slider() -> None:
@@ -54,10 +58,10 @@ def dispense_ingredient(
     Generic function to dispense ingredients based on weight deficit.
 
     :param name: Ingredient name (for log display)
-    :param get_weight_func: Function to retrieve current JSON weight for the ingredient
-    :param set_weight_func: Function to update the JSON weight for the ingredient
+    :param get_weight_func: Function to retrieve current json weight for the ingredient
+    :param set_weight_func: Function to update the json weight for the ingredient
     :param dispense_func: Relay controller function to dispense the ingredient
-    :param display_weight_func: Function to update LCD with the weight
+    :param display_weight_func: Function to update LCD with the weight (e.g. fpj_lcd.display_kakawate_weight)
     :param step: Amount to dispense per loop (default is 5 grams)
     """
     current_weight = get_weight_func()
@@ -68,36 +72,33 @@ def dispense_ingredient(
 
     if deficit <= 0:
         print(f"[{name}] No need to add. Already enough.")
-        display_weight_func(target_weight)  # Ensure exact target is shown
+        display_weight_func(current_weight)  # ✅ Show weight even if enough
         return
 
     scale.trigger_tare()
-    sleep(5)  # Allow settling time
+    sleep(0.5)  # Allow some settling time
 
     while True:
-        live_weight = scale.get_weight()
-
-        # Skip loop if weight reading is invalid
-        if live_weight < 0:
-            print(f"[{name}] Ignored invalid reading: {live_weight}g")
+        weight = scale.get_weight()
+        if weight < 0:
             updated_weight = current_weight
-        else:
-            updated_weight = live_weight
-
         if updated_weight > target_weight:
             updated_weight = target_weight
-
+        
         print(f"[{name}] : {updated_weight}g / {target_weight}g")
 
+        # ✅ Update LCD and JSON every loop
         display_weight_func(updated_weight)
         set_weight_func(updated_weight)
 
+
+
+        # ✅ Read JSON again for decision making
         current_weight = get_weight_func()
         deficit = target_weight - current_weight
 
         if deficit <= 0:
-            print(f"[{name}] Target achieved. Final JSON weight: {target_weight}g.")
-            display_weight_func(target_weight)  # Ensure display is accurate
+            print(f"[{name}] Target achieved. Final JSON weight: {current_weight}g.")
             break
 
         dispense_func(step)
@@ -112,11 +113,9 @@ def add_kakawate():
         "KAKAWATE",
         json.get_kakawate_weight,
         json.update_kakawate_weight,
-        #controller.dispense_kakawate,
-        controller.pump_water,
+        controller.dispense_kakawate,
         lcd.display_kakawate_weight,
-        step=3
-        #step=5
+        step=5
     )
 
 
@@ -126,11 +125,9 @@ def add_neem():
         "NEEM",
         json.get_neem_weight,
         json.update_neem_weight,
-        #controller.dispense_neem,
-        controller.pump_water,
+        controller.dispense_neem,
         lcd.display_neem_weight,
-        step=3
-        #step=5
+        step=5
     )
 
 
@@ -140,12 +137,9 @@ def add_molasses():
         "MOLASSES",
         json.get_molasses_weight,
         json.update_molasses_weight,
-        controller.pump_water,
-        #controller.add_molasses,
+        controller.add_molasses,
         lcd.display_molasses_weight,
-        #step=2
-        step=6
-
+        step=2
     )
 
 
@@ -157,9 +151,7 @@ def add_water():
         json.update_water_weight,
         controller.pump_water,
         lcd.display_water_weight,
-        #step=1.5
-        step=6
-        
+        step=1.5
     )
 
 def display_all_weights():
