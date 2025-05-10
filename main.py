@@ -63,6 +63,10 @@ def dispense_ingredient(
     current_weight = get_weight_func()
     target_weight = TARGET_WEIGHTS[name]
     deficit = target_weight - current_weight
+    updated_weight = current_weight
+    add = False
+
+
 
     print(f"[{name}] Target: {target_weight}g | Current: {current_weight}g | Deficit: {deficit}g")
 
@@ -70,6 +74,8 @@ def dispense_ingredient(
         print(f"[{name}] No need to add. Already enough.")
         display_weight_func(target_weight)  # Ensure exact target is shown
         return
+    elif 0 < deficit < target_weight:
+        add = True
 
     scale.trigger_tare()
     sleep(5)  # Allow settling time
@@ -80,9 +86,17 @@ def dispense_ingredient(
         # Skip loop if weight reading is invalid
         if live_weight < 0:
             print(f"[{name}] Ignored invalid reading: {live_weight}g")
-            updated_weight = current_weight
+            if add:
+                updated_weight = updated_weight + live_weight
+                add = False
+            else:
+                updated_weight = current_weight
         else:
-            updated_weight = live_weight
+            if add:
+                updated_weight = updated_weight + live_weight
+                add = False
+            else:
+                updated_weight = live_weight
 
         if updated_weight > target_weight:
             updated_weight = target_weight
@@ -101,7 +115,6 @@ def dispense_ingredient(
             break
 
         dispense_func(step)
-        sleep(3)
 
 
 
@@ -112,11 +125,11 @@ def add_kakawate():
         "KAKAWATE",
         json.get_kakawate_weight,
         json.update_kakawate_weight,
-        #controller.dispense_kakawate,
-        controller.pump_water,
+        controller.dispense_kakawate,
+        #controller.pump_water,
         lcd.display_kakawate_weight,
-        step=3
-        #step=5
+        #step=20
+        step=5
     )
 
 
@@ -126,11 +139,11 @@ def add_neem():
         "NEEM",
         json.get_neem_weight,
         json.update_neem_weight,
-        #controller.dispense_neem,
-        controller.pump_water,
+        controller.dispense_neem,
+        #controller.pump_water,
         lcd.display_neem_weight,
-        step=3
-        #step=5
+        #step=20
+        step=5
     )
 
 
@@ -140,11 +153,11 @@ def add_molasses():
         "MOLASSES",
         json.get_molasses_weight,
         json.update_molasses_weight,
-        controller.pump_water,
-        #controller.add_molasses,
+        #controller.pump_water,
+        controller.add_molasses,
         lcd.display_molasses_weight,
-        #step=2
-        step=6
+        step=2
+        #step=39
 
     )
 
@@ -157,8 +170,8 @@ def add_water():
         json.update_water_weight,
         controller.pump_water,
         lcd.display_water_weight,
-        #step=1.5
-        step=6
+        step=1.5
+        #step=39
         
     )
 
